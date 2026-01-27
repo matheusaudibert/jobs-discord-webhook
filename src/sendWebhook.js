@@ -1,7 +1,5 @@
 const axios = require('axios');
-require('dotenv').config();
 
-// Recieves webhookUrl as argument now
 async function sendToDiscord(webhookUrl, payload) {
   if (!webhookUrl) {
     console.error('URL do Webhook não fornecida.');
@@ -13,7 +11,6 @@ async function sendToDiscord(webhookUrl, payload) {
     return;
   }
 
-  // Appends query param required for components v2 if not present
   if (!webhookUrl.includes('with_components=true')) {
     webhookUrl += webhookUrl.includes('?') ? '&with_components=true' : '?with_components=true';
   }
@@ -24,7 +21,6 @@ async function sendToDiscord(webhookUrl, payload) {
     });
     console.log(`Mensagem enviada para o Discord com sucesso (${webhookUrl.slice(0, 30)}...).`);
   } catch (error) {
-    // Log detailed error from Discord if available
     console.error('Erro ao enviar mensagem para o Discord:', error.response?.data || error.message);
   }
 }

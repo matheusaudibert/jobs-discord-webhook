@@ -5,15 +5,18 @@ function formatDiscordMessage(jobData) {
     ? jobData.tecnologias.join(', ')
     : (jobData.tecnologias || 'Não informadas');
 
-  // Format requirements to start with "-"
   let requirementsText = 'Não informado';
   if (Array.isArray(jobData.requisitos_tecnicos)) {
     requirementsText = jobData.requisitos_tecnicos.map(req => `- ${req}`).join('\n');
   } else if (typeof jobData.requisitos_tecnicos === 'string') {
-    requirementsText = jobData.requisitos_tecnicos
-      .split('\n')
-      .map(line => line.trim().startsWith('-') ? line.trim() : `- ${line.trim()}`)
-      .join('\n');
+    const items = jobData.requisitos_tecnicos.split(';').map(item => item.trim()).filter(item => item);
+
+    if (items.length > 0) {
+      requirementsText = items.map((req, index) => {
+        const punctuation = index === items.length - 1 ? '.' : ';';
+        return `- ${req}${punctuation}`;
+      }).join('\n');
+    }
   }
 
   const components = [
@@ -93,7 +96,8 @@ function formatDiscordMessage(jobData) {
   }
 
   return {
-    components: components
+    components: components,
+    flags: 32768
   };
 }
 
