@@ -11,17 +11,23 @@ async function sendToDiscord(webhookUrl, payload) {
     return;
   }
 
-  if (!webhookUrl.includes('with_components=true')) {
-    webhookUrl += webhookUrl.includes('?') ? '&with_components=true' : '?with_components=true';
-  }
+  const urls = webhookUrl.split(',').map(url => url.trim());
 
-  try {
-    const res = await axios.post(webhookUrl, payload, {
-      headers: { "Content-Type": "application/json" }
-    });
-    console.log(`Mensagem enviada para o Discord com sucesso (${webhookUrl.slice(0, 30)}...).`);
-  } catch (error) {
-    console.error('Erro ao enviar mensagem para o Discord:', error.response?.data || error.message);
+  for (let url of urls) {
+    if (!url) continue;
+
+    if (!url.includes('with_components=true')) {
+      url += url.includes('?') ? '&with_components=true' : '?with_components=true';
+    }
+
+    try {
+      const res = await axios.post(url, payload, {
+        headers: { "Content-Type": "application/json" }
+      });
+      console.log(`Mensagem enviada para o Discord com sucesso (${url.slice(0, 30)}...).`);
+    } catch (error) {
+      console.error(`Erro ao enviar mensagem para o Discord (${url.slice(0, 30)}...):`, error.response?.data || error.message);
+    }
   }
 }
 
